@@ -1,6 +1,8 @@
 package app.Login.Model;
 
 import app.Login.*;
+import com.google.gson.*;
+
 
 /**
  * Created by Angel on 11/26/16.
@@ -8,9 +10,14 @@ import app.Login.*;
 public class LoginAPIDataManager {
     public Boolean attemptLogin(LoginItem loginItem)
     {
+
+        Gson test = new Gson();
+        String value = test.toJson(loginItem);
+
+
         if (loginItem.username.toLowerCase().equals("angel") && loginItem.password.equals("password"))
         {
-            //System.out.println("Sucessful login!!!!");
+            System.out.println(value);
             return true;
         }
 
