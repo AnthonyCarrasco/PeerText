@@ -10,5 +10,6 @@
     <orderEntry type="library" name="com.google.code.gson:gson:2.8.0" level="project" />
     <orderEntry type="library" name="org.apache.httpcomponents:httpclient:4.2" level="project" />
     <orderEntry type="library" name="org.apache.httpcomponents:httpclient:4.3.5" level="project" />
+    <orderEntry type="library" name="org.asynchttpclient:async-http-client:2.0.24" level="project" />
   </component>
 </module>
