@@ -38,6 +38,6 @@ public class FileSystemController extends Parent{
 
     public void returnFiles(FileItem[] data)
     {
-        fileTable.
+      
     }
 }
