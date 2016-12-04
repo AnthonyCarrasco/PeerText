@@ -1,6 +1,10 @@
 package app.Login.Controller;
 
+import app.FileSystem.Controller.FileSystemController;
+import app.FileSystem.Model.FileSystemAPIDataManager;
+import app.FileSystem.Model.FileSystemModel;
 import app.Login.LoginItem;
+import app.Login.LoginResults;
 import app.Login.Model.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -48,22 +52,27 @@ public class LoginController extends Parent{
         }
     }
 
-    public void returnResultsOfLogin(Boolean success)
+    public void returnResultsOfLogin(LoginResults results)
     {
         System.out.println("Return results of login called!!!!");
         // Changes to the UI must be done on JavaFX Thread
-        if (success == true) {
+        if (results.success == true) {
 
             try {
                 FXMLLoader fileSystemLoader = new FXMLLoader();
-                Parent fileSystemView = fileSystemLoader.load(getClass().getResource("/app/FileSystem/View/FileSystem.fxml"));
-
+                Parent fileSystemView = fileSystemLoader.load(getClass().getResource("/app/FileSystem/View/FileSystem.fxml").openStream());
+                FileSystemController fController = (FileSystemController) fileSystemLoader.getController();
+                fController.model = new FileSystemModel();
+                fController.model.controller = fController;
+                fController.model.fileSystemAPIDataManager = new FileSystemAPIDataManager();
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
+
                         primaryStage.setTitle("File System");
                         primaryStage.setScene(new Scene(fileSystemView));
                         primaryStage.show();
+                        fController.loadFiles(results.user_id);
 
                     }
                 });

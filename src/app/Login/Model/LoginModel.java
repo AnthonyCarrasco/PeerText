@@ -19,7 +19,7 @@ public class LoginModel {
     {
         System.out.println("Username: " + loginItem.username + " Password: " + loginItem.password);
 
-        CompletableFuture<Boolean> f1 = new CompletableFuture();
+        CompletableFuture<LoginResults> f1 = new CompletableFuture();
         f1.supplyAsync(() -> { return loginAPIDataManager.attemptLogin(loginItem);}).whenCompleteAsync((a, error) -> {controller.returnResultsOfLogin(a);});
 
     }
