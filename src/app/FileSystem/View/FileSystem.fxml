@@ -11,7 +11,7 @@
         <Pane layoutX="223.0" layoutY="222.0" prefHeight="170.0" prefWidth="366.0" style="-fx-background-color: white; -fx-background-radius: 5px;">
             <children>
                 <Label layoutX="137.0" layoutY="26.0" text="File Maintaince" textFill="#9b9b9b" />
-                <Button id="btnCreateFile" layoutX="53.0" layoutY="72.0" mnemonicParsing="false" style="-fx-background-color: #4990E2;" text="Create File" textFill="WHITE" />
+                <Button id="btnCreateFile" onAction="#handleCreateButtonAction" layoutX="53.0" layoutY="72.0" mnemonicParsing="false" style="-fx-background-color: #4990E2;" text="Create File" textFill="WHITE" />
                 <Button id="btnDeleteFile" layoutX="229.0" layoutY="72.0" mnemonicParsing="false" style="-fx-background-color: #4990E2;" text="Delete File" textFill="WHITE" />
             </children>
         </Pane>
@@ -24,9 +24,9 @@
                 <Label layoutX="248.0" layoutY="92.0" text="Edit View Access" textFill="#9b9b9b" />
             </children>
         </Pane>
-        <TableView id="fileTable" layoutX="14.0" layoutY="14.0" prefHeight="378.0" prefWidth="200.0" style="-fx-background-radius: 5px;">
+        <TableView id="fileTable" layoutX="14.0" layoutY="14.0" prefHeight="378.0" prefWidth="200.0"  style="-fx-background-radius: 5px;">
             <columns>
-                <TableColumn prefWidth="199.0" />
+                <TableColumn id="fileNameCol" prefWidth="199.0" text="Files" />
             </columns>
         </TableView>
     </children>
