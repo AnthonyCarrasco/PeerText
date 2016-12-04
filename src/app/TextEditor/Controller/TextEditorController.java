@@ -1,6 +1,8 @@
 package app.TextEditor.Controller;
 
 import app.TextEditor.*;
+import app.TextEditor.Model.TextAPIDataManager;
+import app.TextEditor.Model.TextEditorModel;
 import javafx.animation.KeyFrame;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -21,13 +23,14 @@ public class TextEditorController extends Parent {
     @FXML private Timeline autosave;
           public int fileId;
           public TextFile file;
+          public TextEditorModel model;
 
     @FXML protected void clickedSavedButton(ActionEvent event)
     {
         String text = textArea.getText();
         file.Id = fileId;
         file.textFile = text;
-        //Call sendText(TextFile)
+        model.saveText(file);
         System.out.println(text);
 
     }
@@ -49,7 +52,7 @@ public class TextEditorController extends Parent {
         String text = textArea.getText();
         file.Id = fileId;
         file.textFile = text;
-        //Call sendText(TextFile)
+        model.saveText(file);
         System.out.println(text);
 
     }
@@ -65,7 +68,8 @@ public class TextEditorController extends Parent {
         autosave.setCycleCount(Timeline.INDEFINITE);
         autosave.play();
         //set the retrieve text
-        textArea.textProperty().set("HelloWorld");
+        String content = model.retrieveText(fileId);
+        textArea.textProperty().set(content);
     }
 
 

@@ -35,5 +35,7 @@ public class TextAPIDataManager {
     {
         Gson JsonSerializer = new Gson();
         JsonSerializer.toJson(file);
+        String json = JsonSerializer.toString();
+        System.out.println(json);
     };
 }
