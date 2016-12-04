@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.Pane?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #4990E2;" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <Pane layoutX="223.0" layoutY="222.0" prefHeight="170.0" prefWidth="366.0" style="-fx-background-color: white; -fx-background-radius: 5px;">
+            <children>
+                <Label layoutX="137.0" layoutY="26.0" text="File Maintaince" textFill="#9b9b9b" />
+                <Button id="btnCreateFile" layoutX="53.0" layoutY="72.0" mnemonicParsing="false" style="-fx-background-color: #4990E2;" text="Create File" textFill="WHITE" />
+                <Button id="btnDeleteFile" layoutX="229.0" layoutY="72.0" mnemonicParsing="false" style="-fx-background-color: #4990E2;" text="Delete File" textFill="WHITE" />
+            </children>
+        </Pane>
+        <Pane layoutX="223.0" layoutY="14.0" prefHeight="200.0" prefWidth="366.0" style="-fx-background-color: white; -fx-background-radius: 5px;">
+            <children>
+                <Button id="btnEditAccess" layoutX="74.0" layoutY="120.0" mnemonicParsing="false" style="-fx-background-color: #4990E2;" text="+" textFill="WHITE" />
+                <Button id="btnEditViewAccess" layoutX="287.0" layoutY="120.0" mnemonicParsing="false" style="-fx-background-color: #4990E2;" text="+" textFill="WHITE" />
+                <Label layoutX="126.0" layoutY="34.0" text="Permission Setting" textFill="#9b9b9b" />
+                <Label layoutX="51.0" layoutY="92.0" text="Edit Access" textFill="#9b9b9b" />
+                <Label layoutX="248.0" layoutY="92.0" text="Edit View Access" textFill="#9b9b9b" />
+            </children>
+        </Pane>
+        <TableView id="fileTable" layoutX="14.0" layoutY="14.0" prefHeight="378.0" prefWidth="200.0" style="-fx-background-radius: 5px;">
+            <columns>
+                <TableColumn prefWidth="199.0" />
+            </columns>
+        </TableView>
+    </children>
+</Pane>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.GridPane?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TitledPane?>
+
+
+<TitledPane collapsible="false" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65"  xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.TextEditor.Controller.TextEditorController">
+<content>
+    <TextArea fx:id="textArea" onMouseExited="#textAreaCapture" prefHeight="400.0" prefWidth="600.0" />
+</content>
+<graphic>
+    <MenuButton mnemonicParsing="false" text="Options">
+        <items>
+            <MenuItem fx:id="saveButton" onAction="#clickedSavedButton" mnemonicParsing="false" text="Save" />
+            <MenuItem fx:id= "closeButton" onAction="#clickedCloseButton" mnemonicParsing="false" text="Close File" />
+            <MenuItem fx:id= "exitButton" onAction="#clickedExitButton" mnemonicParsing="false" text="Exit PeerText" />
+        </items>
+    </MenuButton>
+</graphic>
+</TitledPane>
