@@ -16,7 +16,7 @@
     <TextArea fx:id="textArea" onMouseExited="#textAreaCapture" prefHeight="400.0" prefWidth="600.0" />
 </content>
 <graphic>
-    <MenuButton mnemonicParsing="false" text="Options">
+    <MenuButton fx:id="menuButton" mnemonicParsing="false" text="Options">
         <items>
             <MenuItem fx:id="saveButton" onAction="#clickedSavedButton" mnemonicParsing="false" text="Save" />
             <MenuItem fx:id= "closeButton" onAction="#clickedCloseButton" mnemonicParsing="false" text="Close File" />

@@ -1,18 +1,13 @@
 package app.TextEditor.Controller;
 
+import app.TextEditor.*;
 import javafx.animation.KeyFrame;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.text.Text;
-import javafx.stage.Stage;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
@@ -24,15 +19,22 @@ public class TextEditorController extends Parent {
     @FXML private MenuItem exitButton;
     @FXML private MenuItem menuItem;
     @FXML private Timeline autosave;
+          public int fileId;
+          public TextFile file;
 
     @FXML protected void clickedSavedButton(ActionEvent event)
     {
         String text = textArea.getText();
+        file.Id = fileId;
+        file.textFile = text;
+        //Call sendText(TextFile)
+        System.out.println(text);
+
     }
 
     @FXML protected void clickedCloseButton(ActionEvent event)
     {
-
+        //Transition back to fileViewer
     }
 
     @FXML protected void clickedExitButton(ActionEvent event)
@@ -45,6 +47,9 @@ public class TextEditorController extends Parent {
     @FXML protected void textAreaCapture(MouseEvent event)
     {
         String text = textArea.getText();
+        file.Id = fileId;
+        file.textFile = text;
+        //Call sendText(TextFile)
         System.out.println(text);
 
     }
@@ -59,6 +64,8 @@ public class TextEditorController extends Parent {
         }));
         autosave.setCycleCount(Timeline.INDEFINITE);
         autosave.play();
+        //set the retrieve text
+        textArea.textProperty().set("HelloWorld");
     }
 
 
