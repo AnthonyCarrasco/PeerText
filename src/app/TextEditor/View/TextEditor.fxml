@@ -11,7 +11,8 @@
 <?import javafx.scene.control.TitledPane?>
 
 
-<TitledPane collapsible="false" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65"  xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.TextEditor.Controller.TextEditorController">
+<?import javafx.scene.control.TextField?>
+<TitledPane collapsible="false" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.TextEditor.Controller.TextEditorController">
 <content>
     <TextArea fx:id="textArea" onMouseExited="#textAreaCapture" prefHeight="400.0" prefWidth="600.0" />
 </content>
@@ -22,6 +23,9 @@
             <MenuItem fx:id= "closeButton" onAction="#clickedCloseButton" mnemonicParsing="false" text="Close File" />
             <MenuItem fx:id= "exitButton" onAction="#clickedExitButton" mnemonicParsing="false" text="Exit PeerText" />
         </items>
+        <graphic>
+            <TextField promptText="Please Enter Text" />
+        </graphic>
     </MenuButton>
 </graphic>
 </TitledPane>
