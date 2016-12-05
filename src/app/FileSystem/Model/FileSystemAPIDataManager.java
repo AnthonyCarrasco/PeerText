@@ -1,11 +1,14 @@
 package app.FileSystem.Model;
 
 import app.FileSystem.FileItem;
+import app.FileSystem.PermissionItem;
+import app.FileSystem.RequestPermissionsItem;
 import app.Login.LoginResults;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.asynchttpclient.AsyncCompletionHandler;
 import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.Request;
 import org.asynchttpclient.Response;
 import java.util.*;
 import java.io.IOException;
@@ -47,6 +50,53 @@ public class FileSystemAPIDataManager {
                                         return filesArray;
                                     } else {
                                         FileItem[] results = new FileItem[0];
+                                        return results;
+                                    }
+                                }
+                            }
+                    )
+                    .toCompletableFuture();
+            return fList.get();
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return failed;
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            return failed;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return failed;
+        }
+    }
+
+    public PermissionItem[] attemptToRetrievePermissions(RequestPermissionsItem pItem)
+    {
+        Gson jsonSeralizer = new Gson();
+        String jSONItem = jsonSeralizer.toJson(pItem);
+        System.out.println(jSONItem);
+        PermissionItem[]  failed = null;
+        try (AsyncHttpClient asyncHttpClient = asyncHttpClient()) {
+            Future<PermissionItem[] > fList = asyncHttpClient
+                    .preparePost("http://lowCost-env.kydrpmgvhm.us-east-1.elasticbeanstalk.com/request_permissions.php")
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Accept", "application/json")
+                    .setBody(jSONItem)
+                    .execute(
+                            new AsyncCompletionHandler<PermissionItem[] >() {
+                                @Override
+                                public PermissionItem[]  onCompleted(Response response) throws Exception {
+                                    // Was the login successful
+                                    System.out.println(response.getResponseBody());
+                                    PermissionItem[] permissionsArray = jsonSeralizer.fromJson(response.getResponseBody(), PermissionItem[].class);
+                                    if (permissionsArray.length != 0) {
+                                        for(PermissionItem pItems: permissionsArray)
+                                        {
+                                            pItems.username = pItems.username.trim();
+                                        }
+                                        return permissionsArray;
+                                    } else {
+                                        PermissionItem[] results = new PermissionItem[0];
                                         return results;
                                     }
                                 }
