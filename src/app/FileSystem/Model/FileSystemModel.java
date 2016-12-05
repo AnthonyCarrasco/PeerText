@@ -4,6 +4,8 @@ import app.FileSystem.Controller.FileSystemController;
 import app.FileSystem.FileItem;
 import java.util.concurrent.CompletableFuture;
 
+import app.FileSystem.PermissionItem;
+import app.FileSystem.RequestPChangeItem;
 import app.FileSystem.RequestPermissionsItem;
 import javafx.collections.ObservableList;
 /**
@@ -24,5 +26,11 @@ public class FileSystemModel {
     {
         CompletableFuture<FileItem[]> f1 = new CompletableFuture();
         f1.supplyAsync(() -> { return fileSystemAPIDataManager.attemptToRetrievePermissions(pItem);}).whenCompleteAsync((a, error) -> {controller.returnPermissions(a);});
+    }
+
+    public void setPermission(RequestPChangeItem pChangeItem)
+    {
+        CompletableFuture<Boolean> f1 = new CompletableFuture();
+        f1.supplyAsync(() -> {return fileSystemAPIDataManager.attemptToSetPermissions(pChangeItem);}).whenCompleteAsync((a, error) -> {System.out.println(a);});
     }
 }

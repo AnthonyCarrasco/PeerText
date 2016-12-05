@@ -3,8 +3,10 @@ package app.FileSystem.Controller;
 import app.FileSystem.FileItem;
 import app.FileSystem.Model.FileSystemModel;
 import app.FileSystem.PermissionItem;
+import app.FileSystem.RequestPChangeItem;
 import app.FileSystem.RequestPermissionsItem;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -29,8 +31,9 @@ public class FileSystemController extends Parent{
     @FXML private TableView<FileItem> fileTable;
     @FXML private TableColumn<FileItem, String> fileNameCol;
     @FXML private TableView<PermissionItem> pTable;
-    @FXML private TableColumn<FileItem, String> userCol;
-    @FXML private TableColumn<FileItem, String> accessCol;
+    @FXML private TableColumn<PermissionItem, String> userCol;
+    @FXML private TableColumn<PermissionItem, String> accessCol;
+    private String selectedFileID;
     ObservableList<FileItem> files;
     ObservableList<PermissionItem> pItems;
     ObservableList<String> permissions = FXCollections.observableArrayList(
@@ -57,24 +60,39 @@ public class FileSystemController extends Parent{
                         if (newSelection.owner_id.equals(user_id))
                         {
                             RequestPermissionsItem requestPItem = new RequestPermissionsItem(user_id, newSelection.textfile_id);
+                            selectedFileID = newSelection.textfile_id;
                             model.getPermissions(requestPItem);
                         }
                         else
                         {
                             pTable.getItems().clear();
                         }
+
+                        model.getFiles(user_id);
                     }
                 });
 
                 userCol.setCellValueFactory(
-                        new PropertyValueFactory<FileItem, String>("username"));
+                        new PropertyValueFactory<PermissionItem, String>("username"));
 
                 accessCol.setCellFactory(
                         ChoiceBoxTableCell.forTableColumn(new DefaultStringConverter(), permissions)
                 );
 
                 accessCol.setCellValueFactory(
-                        new PropertyValueFactory<FileItem, String>("type"));
+                        new PropertyValueFactory<PermissionItem, String>("type"));
+
+                accessCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<PermissionItem, String>>() {
+
+                    @Override
+                    public void handle(TableColumn.CellEditEvent<PermissionItem, String> t) {
+                        ((PermissionItem) t.getTableView().getItems().get(t.getTablePosition().getRow())).type = t.getNewValue();
+                        RequestPChangeItem modifyedPItem = new RequestPChangeItem(selectedFileID, ((PermissionItem) t.getTableView().getItems().get(t.getTablePosition().getRow())).user_id, t.getNewValue());
+                        model.setPermission(modifyedPItem);
+                    }
+
+                });
+
             }
 
         });
