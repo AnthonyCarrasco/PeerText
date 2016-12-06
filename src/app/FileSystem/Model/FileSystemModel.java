@@ -1,12 +1,11 @@
 package app.FileSystem.Model;
 
+import app.FileSystem.*;
+import app.FileSystem.Controller.DeleteItem;
 import app.FileSystem.Controller.FileSystemController;
-import app.FileSystem.FileItem;
+
 import java.util.concurrent.CompletableFuture;
 
-import app.FileSystem.PermissionItem;
-import app.FileSystem.RequestPChangeItem;
-import app.FileSystem.RequestPermissionsItem;
 import javafx.collections.ObservableList;
 /**
  * Created by Angel on 11/23/16.
@@ -33,4 +32,17 @@ public class FileSystemModel {
         CompletableFuture<Boolean> f1 = new CompletableFuture();
         f1.supplyAsync(() -> {return fileSystemAPIDataManager.attemptToSetPermissions(pChangeItem);}).whenCompleteAsync((a, error) -> {System.out.println(a);});
     }
+
+    public void createFile(CreateFileItem cItem)
+    {
+        CompletableFuture<Boolean> f1 = new CompletableFuture();
+        f1.supplyAsync(() -> {return fileSystemAPIDataManager.attemptToCreateFile(cItem);}).whenCompleteAsync((a, error) -> {controller.fileCreated(a);});
+    }
+
+    public void deleteFile(DeleteItem item)
+    {
+        CompletableFuture<Boolean> f1 = new CompletableFuture();
+        f1.supplyAsync(() -> {return fileSystemAPIDataManager.attemptToDeleteFile(item);}).whenCompleteAsync((a, error) -> {controller.fileDeleted(a);});
+    }
+
 }

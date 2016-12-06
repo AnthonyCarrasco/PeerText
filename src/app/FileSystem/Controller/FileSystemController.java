@@ -1,10 +1,7 @@
 package app.FileSystem.Controller;
 
-import app.FileSystem.FileItem;
+import app.FileSystem.*;
 import app.FileSystem.Model.FileSystemModel;
-import app.FileSystem.PermissionItem;
-import app.FileSystem.RequestPChangeItem;
-import app.FileSystem.RequestPermissionsItem;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.Parent;
@@ -12,12 +9,13 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.collections.*;
-import javafx.scene.control.TableView;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.ChoiceBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.text.Text;
 import javafx.util.converter.DefaultStringConverter;
+
+import java.util.Optional;
 
 /**
  * Created by Angel on 11/23/16.
@@ -28,12 +26,14 @@ public class FileSystemController extends Parent{
     @FXML private Button btnDeleteFile;
     @FXML private Button btnEditAccess;
     @FXML private Button btnEditViewAccess;
+    @FXML private Button btnRefresh;
     @FXML private TableView<FileItem> fileTable;
     @FXML private TableColumn<FileItem, String> fileNameCol;
     @FXML private TableView<PermissionItem> pTable;
     @FXML private TableColumn<PermissionItem, String> userCol;
     @FXML private TableColumn<PermissionItem, String> accessCol;
-    private String selectedFileID;
+    private FileItem selectedOwnedFile;
+    private FileItem selectedFile;
     ObservableList<FileItem> files;
     ObservableList<PermissionItem> pItems;
     ObservableList<String> permissions = FXCollections.observableArrayList(
@@ -60,7 +60,7 @@ public class FileSystemController extends Parent{
                         if (newSelection.owner_id.equals(user_id))
                         {
                             RequestPermissionsItem requestPItem = new RequestPermissionsItem(user_id, newSelection.textfile_id);
-                            selectedFileID = newSelection.textfile_id;
+                            selectedOwnedFile = newSelection;
                             model.getPermissions(requestPItem);
                         }
                         else
@@ -68,7 +68,8 @@ public class FileSystemController extends Parent{
                             pTable.getItems().clear();
                         }
 
-                        model.getFiles(user_id);
+                        selectedFile = newSelection;
+
                     }
                 });
 
@@ -87,12 +88,23 @@ public class FileSystemController extends Parent{
                     @Override
                     public void handle(TableColumn.CellEditEvent<PermissionItem, String> t) {
                         ((PermissionItem) t.getTableView().getItems().get(t.getTablePosition().getRow())).type = t.getNewValue();
-                        RequestPChangeItem modifyedPItem = new RequestPChangeItem(selectedFileID, ((PermissionItem) t.getTableView().getItems().get(t.getTablePosition().getRow())).user_id, t.getNewValue());
+                        RequestPChangeItem modifyedPItem = new RequestPChangeItem(selectedOwnedFile.textfile_id, ((PermissionItem) t.getTableView().getItems().get(t.getTablePosition().getRow())).user_id, t.getNewValue());
                         model.setPermission(modifyedPItem);
                     }
 
                 });
 
+                fileTable.setRowFactory( tv -> {
+                    TableRow<FileItem> row = new TableRow<>();
+
+                    row.setOnMouseClicked(event -> {
+                        if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
+                            FileItem rowData = row.getItem();
+                            System.out.println("Opening file: " + rowData.title);
+                        }
+                    });
+                    return row ;
+                });
             }
 
         });
@@ -108,7 +120,7 @@ public class FileSystemController extends Parent{
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-
+                //selectedFile = null;
                 fileTable.setItems(files);
 
             }
@@ -133,6 +145,129 @@ public class FileSystemController extends Parent{
     @FXML protected  void handleCreateButtonAction(ActionEvent event)
     {
         System.out.println("Create file pressed");
+
+
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+
+                TextInputDialog dialog = new TextInputDialog();
+                dialog.setTitle("Creating new file");
+                dialog.setHeaderText("Please enter a filename");
+
+                Optional<String> result = dialog.showAndWait();
+                String fileName= "none.";
+
+                if (result.isPresent() && !result.equals("")) {
+
+                    fileName = result.get();
+                    if (fileName.equals(""))
+                    {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error!");
+                        alert.setHeaderText("File creation failed!");
+                        alert.setContentText("Invalid filename.");
+                        alert.showAndWait();
+                    }
+
+                    else
+                    {
+                        System.out.println("Filename: "+ fileName);
+                        CreateFileItem cFileItem = new CreateFileItem(fileName, user_id);
+                        model.createFile(cFileItem);
+                    }
+
+                }
+            }
+        });
+    }
+
+    @FXML protected void handleRefreshButtonAction(ActionEvent event)
+    {
+        model.getFiles(user_id);
+    }
+
+
+    @FXML protected void handleDeleteButtonAction(ActionEvent event)
+    {
+
+        if(selectedFile != null && selectedFile.owner_id.equals(user_id))
+        {
+            System.out.println("Deleting file: " + selectedFile.title);
+            System.out.println("Owner ID: " + selectedFile.owner_id + " My user id: "+ user_id);
+            DeleteItem dItem = new DeleteItem(selectedFile.textfile_id, selectedFile.owner_id);
+            model.deleteFile(dItem);
+
+        }
+        else
+        {
+
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+
+                   if (selectedFile != null &&!selectedFile.owner_id.equals(user_id))
+                   {
+                       Alert alert = new Alert(Alert.AlertType.ERROR);
+                       alert.setTitle("Error!");
+                       alert.setHeaderText("Deletion failed!");
+                       alert.setContentText("You don't own this file.");
+                       alert.showAndWait();
+                   }
+                   else
+                   {
+                       Alert alert = new Alert(Alert.AlertType.ERROR);
+                       alert.setTitle("Error!");
+                       alert.setHeaderText("Deletion failed!");
+                       alert.setContentText("Please select file to delete.");
+                       alert.showAndWait();
+                   }
+
+                }
+            });
+        }
+    }
+    public void fileCreated(Boolean results)
+    {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                if (results == true)
+                {
+                    model.getFiles(user_id);
+                }
+                else
+                {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error!");
+                    alert.setHeaderText("File creation failed!");
+                    alert.setContentText("Server error.");
+                    alert.showAndWait();
+                }
+            }
+        });
+    }
+
+    public void fileDeleted(Boolean results)
+    {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                if (results == true)
+                {
+                    model.getFiles(user_id);
+                }
+                else
+                {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error!");
+                    alert.setHeaderText("File deletion failed!");
+                    alert.setContentText("Server error.");
+                    alert.showAndWait();
+                }
+            }
+        });
     }
 
 }

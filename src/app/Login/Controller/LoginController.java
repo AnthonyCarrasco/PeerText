@@ -96,4 +96,5 @@ public class LoginController extends Parent{
             });
         }
     }
+
 }
