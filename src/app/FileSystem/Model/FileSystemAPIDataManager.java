@@ -263,4 +263,48 @@ public class FileSystemAPIDataManager {
         }
     }
 
+    public FileAccessItem attemptToGetFileAccess(FileAccessRequestItem aItem)
+    {
+        Gson jsonSeralizer = new Gson();
+        String jSONItem = jsonSeralizer.toJson(aItem);
+        System.out.println(jSONItem);
+        FileAccessItem  failed = null;
+        try (AsyncHttpClient asyncHttpClient = asyncHttpClient()) {
+            Future<FileAccessItem> accessItem = asyncHttpClient
+                    .preparePost("http://lowCost-env.kydrpmgvhm.us-east-1.elasticbeanstalk.com/request_file_access.php")
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Accept", "application/json")
+                    .setBody(jSONItem)
+                    .execute(
+                            new AsyncCompletionHandler<FileAccessItem>() {
+                                @Override
+                                public FileAccessItem onCompleted(Response response) throws Exception {
+                                    // Was the login successful
+                                    System.out.println(response.getResponseBody());
+                                    FileAccessItem fileAccessItem = jsonSeralizer.fromJson(response.getResponseBody(), FileAccessItem.class);
+                                    if (fileAccessItem != null) {
+                                        fileAccessItem.title = fileAccessItem.title.trim();
+                                        fileAccessItem.text = fileAccessItem.text.trim();
+                                        return fileAccessItem;
+                                    } else {
+                                        return failed;
+                                    }
+                                }
+                            }
+                    )
+                    .toCompletableFuture();
+            return accessItem.get();
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return failed;
+        } catch (ExecutionException e) {
+            //e.printStackTrace();
+            return failed;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return failed;
+        }
+    }
+
 }

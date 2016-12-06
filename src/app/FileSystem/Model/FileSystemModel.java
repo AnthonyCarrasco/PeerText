@@ -45,4 +45,10 @@ public class FileSystemModel {
         f1.supplyAsync(() -> {return fileSystemAPIDataManager.attemptToDeleteFile(item);}).whenCompleteAsync((a, error) -> {controller.fileDeleted(a);});
     }
 
+    public void getFileAccess(FileAccessRequestItem aItem)
+    {
+        CompletableFuture<Boolean> f1 = new CompletableFuture();
+        f1.supplyAsync(() -> {return fileSystemAPIDataManager.attemptToGetFileAccess(aItem);}).whenCompleteAsync((a, error) -> {controller.returnFileAccessResults(a);});
+    }
+
 }

@@ -100,7 +100,9 @@ public class FileSystemController extends Parent{
                     row.setOnMouseClicked(event -> {
                         if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
                             FileItem rowData = row.getItem();
-                            System.out.println("Opening file: " + rowData.title);
+                            FileAccessRequestItem aItem = new FileAccessRequestItem(rowData.textfile_id, user_id);
+                            model.getFileAccess(aItem);
+
                         }
                     });
                     return row ;
@@ -264,6 +266,29 @@ public class FileSystemController extends Parent{
                     alert.setTitle("Error!");
                     alert.setHeaderText("File deletion failed!");
                     alert.setContentText("Server error.");
+                    alert.showAndWait();
+                }
+            }
+        });
+    }
+
+    public void returnFileAccessResults(FileAccessItem aItem)
+    {
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                if(aItem != null && !aItem.type.equals("n") && aItem.avialable == true)
+                {
+                    System.out.println("Openning file: " + aItem.title);
+                }
+
+                else
+                {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error!");
+                    alert.setHeaderText("Unable to open file!");
+                    alert.setContentText("File is not available or no longer exists.");
                     alert.showAndWait();
                 }
             }
