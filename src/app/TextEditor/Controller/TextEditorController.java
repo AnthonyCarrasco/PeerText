@@ -24,6 +24,8 @@ import javafx.util.Duration;
 import app.FileSystem.*;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class TextEditorController extends Parent {
     @FXML public TextArea textArea;
@@ -33,8 +35,8 @@ public class TextEditorController extends Parent {
     @FXML private MenuItem menuItem;
     @FXML private Timeline autosave;
     @FXML private TextField titleField;
-          public TextFile file;
-          public TextEditorModel model;
+    public TextFile file = new TextFile();
+    public TextEditorModel model;
     public String text;
     public String title;
     private FileAccessItem accessItem;
@@ -45,8 +47,9 @@ public class TextEditorController extends Parent {
     {
         String text = textArea.getText();
         file.textfile_id = accessItem.textfile_id;
+        file.title = titleField.getText();
         file.text = textArea.getText();
-        model.saveText(file);
+        model.saveFile(file);
         System.out.println(text);
 
     }
@@ -54,8 +57,7 @@ public class TextEditorController extends Parent {
     @FXML protected void clickedCloseButton(ActionEvent event)
     {
         //Transition back to fileViewer
-
-
+        model.makeTextFileAvailable(file);
 
         try {
             FXMLLoader fileSystemLoader = new FXMLLoader();
@@ -81,19 +83,18 @@ public class TextEditorController extends Parent {
         }
     }
 
-    @FXML protected void clickedExitButton(ActionEvent event)
-    {
-        Platform.exit();
-        System.exit(0);
+    @FXML protected void clickedExitButton(ActionEvent event) throws InterruptedException {
+        model.makeTextFileAvailable(file);
+        Thread.sleep(2000);
+        exitApp();
     }
 
 
     @FXML protected void textAreaCapture(MouseEvent event)
     {
-        String text = textArea.getText();
-//        file.textfile_id = accessItem.textfile_id;
-       // file.text = text;
-        model.saveText(file);
+        file.title = titleField.getText();
+        file.text = textArea.getText();
+        model.saveFile(file);
         System.out.println(text);
 
     }
@@ -104,6 +105,12 @@ public class TextEditorController extends Parent {
             @Override
             public void handle(ActionEvent event) {
                 System.out.println(textArea.getText());
+
+                TextFile tf = new TextFile();
+                tf.text = textArea.getText();
+                tf.title = titleField.getText();
+
+                model.saveFile(tf);
             }
         }));
         autosave.setCycleCount(Timeline.INDEFINITE);
@@ -115,8 +122,8 @@ public class TextEditorController extends Parent {
 
     public void prepareTextEditor(FileAccessItem aItem)
     {
-        System.out.println("TextArea: " + textArea);
         this.accessItem = aItem;
+        file.textfile_id = aItem.textfile_id;
         textArea.setWrapText(true);
         if (aItem.type.equals("v"))
         {
@@ -130,12 +137,18 @@ public class TextEditorController extends Parent {
             {
                 //set the retrieve text
                 titleField.textProperty().setValue(aItem.title);
-                String content = aItem.text;//model.retrieveText(fileId);
+                String content = aItem.text;
                 textArea.setText(aItem.text);
                 textArea.requestFocus();
                 textArea.requestLayout();
             }
         });
+    }
+
+    public void exitApp()
+    {
+        Platform.exit();
+        System.exit(0);
     }
 
 
