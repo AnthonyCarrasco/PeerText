@@ -7,7 +7,7 @@ import app.TextEditor.*;
  * Created by anthonycarrasco on 12/3/16.
  */
 public class TextEditorModel {
-    public TextAPIDataManager textAPIDataManager;
+    public TextEditorAPIDataManager textEditorAPIDataManager;
     public TextEditorController textEditorController;
 
 

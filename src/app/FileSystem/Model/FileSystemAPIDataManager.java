@@ -282,6 +282,7 @@ public class FileSystemAPIDataManager {
                                     // Was the login successful
                                     System.out.println(response.getResponseBody());
                                     FileAccessItem fileAccessItem = jsonSeralizer.fromJson(response.getResponseBody(), FileAccessItem.class);
+                                    System.out.println("File Access Item: " + fileAccessItem.available);
                                     if (fileAccessItem != null) {
                                         fileAccessItem.title = fileAccessItem.title.trim();
                                         fileAccessItem.text = fileAccessItem.text.trim();

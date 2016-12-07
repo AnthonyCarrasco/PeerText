@@ -73,6 +73,7 @@ public class LoginController extends Parent{
                         primaryStage.setScene(new Scene(fileSystemView));
                         primaryStage.show();
                         fController.loadFiles(results.user_id);
+                        fController.primaryStage = primaryStage;
 
                     }
                 });

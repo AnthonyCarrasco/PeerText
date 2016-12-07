@@ -1,26 +1,37 @@
 package app.FileSystem.Controller;
 
 import app.FileSystem.*;
+import app.TextEditor.*;
+import app.FileSystem.Model.FileSystemAPIDataManager;
 import app.FileSystem.Model.FileSystemModel;
+import app.TextEditor.Controller.TextEditorController;
+import app.TextEditor.Model.TextEditorAPIDataManager;
+import app.TextEditor.Model.TextEditorModel;
+import com.sun.org.apache.xerces.internal.impl.xpath.XPath;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.collections.*;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.ChoiceBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import javafx.util.converter.DefaultStringConverter;
 
+import java.io.IOException;
 import java.util.Optional;
 
 /**
  * Created by Angel on 11/23/16.
  */
 public class FileSystemController extends Parent{
+    public Stage primaryStage;
     private String user_id;
     @FXML private Button btnCreateFile;
     @FXML private Button btnDeleteFile;
@@ -44,7 +55,7 @@ public class FileSystemController extends Parent{
     public void loadFiles(String user_id)
     {
 
-        System.out.println("Table: " + fileTable);
+        //System.out.println("Table: " + fileTable);
 
         Platform.runLater(new Runnable() {
             @Override
@@ -56,7 +67,7 @@ public class FileSystemController extends Parent{
                         new PropertyValueFactory<FileItem, String>("title"));
                 fileTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
                     if (newSelection != null) {
-                        System.out.println("Selected Item: " + newSelection.title);
+                        //System.out.println("Selected Item: " + newSelection.title);
                         if (newSelection.owner_id.equals(user_id))
                         {
                             RequestPermissionsItem requestPItem = new RequestPermissionsItem(user_id, newSelection.textfile_id);
@@ -146,7 +157,7 @@ public class FileSystemController extends Parent{
 
     @FXML protected  void handleCreateButtonAction(ActionEvent event)
     {
-        System.out.println("Create file pressed");
+        //System.out.println("Create file pressed");
 
 
 
@@ -175,7 +186,7 @@ public class FileSystemController extends Parent{
 
                     else
                     {
-                        System.out.println("Filename: "+ fileName);
+                        //System.out.println("Filename: "+ fileName);
                         CreateFileItem cFileItem = new CreateFileItem(fileName, user_id);
                         model.createFile(cFileItem);
                     }
@@ -196,8 +207,8 @@ public class FileSystemController extends Parent{
 
         if(selectedFile != null && selectedFile.owner_id.equals(user_id))
         {
-            System.out.println("Deleting file: " + selectedFile.title);
-            System.out.println("Owner ID: " + selectedFile.owner_id + " My user id: "+ user_id);
+            //System.out.println("Deleting file: " + selectedFile.title);
+            //System.out.println("Owner ID: " + selectedFile.owner_id + " My user id: "+ user_id);
             DeleteItem dItem = new DeleteItem(selectedFile.textfile_id, selectedFile.owner_id);
             model.deleteFile(dItem);
 
@@ -274,25 +285,50 @@ public class FileSystemController extends Parent{
 
     public void returnFileAccessResults(FileAccessItem aItem)
     {
+         if(aItem != null && !aItem.type.equals("n") && aItem.available.equals("t"))
+         {
 
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                if(aItem != null && !aItem.type.equals("n") && aItem.avialable == true)
-                {
-                    System.out.println("Openning file: " + aItem.title);
+
+             try{
+                 FXMLLoader teLoader = new FXMLLoader();
+                 System.out.println("textEditorView: " + teLoader);
+                 Parent textEditorView = teLoader.load(getClass().getResource("/app/TextEditor/View/TextEditor.fxml").openStream());
+                 System.out.println("textEditorView: " + textEditorView);
+                 TextEditorController tController = (TextEditorController) teLoader.getController();
+                 tController.model = new TextEditorModel();
+                 tController.model.textEditorController = tController;
+                 tController.model.textEditorAPIDataManager = new TextEditorAPIDataManager();
+                 tController.user_id = user_id;
+                 tController.primaryStage = primaryStage;
+                    Platform.runLater(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            primaryStage.setTitle("TextEditor");
+                            primaryStage.setScene(new Scene(textEditorView));
+                            primaryStage.show();
+                            tController.prepareTextEditor(aItem);
+
+                        }
+                     });
+                 }
+                 catch (IOException e)
+                 {
+                     System.out.println("Thrown!!!!!!!!!!");
+                 e.printStackTrace();
                 }
 
-                else
-                {
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Error!");
-                    alert.setHeaderText("Unable to open file!");
-                    alert.setContentText("File is not available or no longer exists.");
-                    alert.showAndWait();
-                }
-            }
-        });
+         }
+
+         else
+         {
+             Alert alert = new Alert(Alert.AlertType.ERROR);
+             alert.setTitle("Error!");
+             alert.setHeaderText("Unable to open file!");
+             alert.setContentText("File is not available or no longer exists.");
+             alert.showAndWait();
+         }
     }
 
 }
